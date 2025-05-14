@@ -16,16 +16,14 @@ class AsymmetricCryptography:
         self.public_key_path = public_key_path
 
     @staticmethod
-    def generate_key(size: int = 2048) -> tuple[rsa.RSAPrivateKey, rsa.RSAPublicKey]:
+    def generate_key(size: int) -> tuple[rsa.RSAPrivateKey, rsa.RSAPublicKey]:
         """
         generates a pair of RSA keys
         :param size: size of keys in bits
         :return: tuple of private and public keys
         """
         try:
-            if size < 2048:
-                raise ValueError("the key size must be at least 2048 bits")
-            private_key = rsa.generate_private_key(public_exponent=65537, key_size=size)
+            private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
             public_key = private_key.public_key()
             return private_key, public_key
         except Exception as e:
