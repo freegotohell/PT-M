@@ -55,7 +55,7 @@ class AsymmetricCryptography:
             raise
 
     @staticmethod
-    def decrypt(data: bytes, private_key: bytes) -> bytes:
+    def decrypt(data: bytes, private_key: rsa.RSAPrivateKey) -> bytes:
         """
         decrypts data using a private RSA key
         :param data: encrypted data
