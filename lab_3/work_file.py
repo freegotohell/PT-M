@@ -56,3 +56,21 @@ def write_txt(data: str, filename: str) -> None:
             f.write(data)
     except Exception as e:
         raise Exception(f"An error occurred when saving the file: {e}")
+
+
+def read_json(filename: str) -> dict:
+    """
+    read and parse a JSON file into a dictionary
+    :param filename: path to the text file to be read
+    :return: parsed JSON data as a dictionary
+    """
+    try:
+        with open(filename, "r", encoding="utf-8") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        print(f"file {filename} not found")
+    except json.JSONDecodeError:
+        print(f"file {filename} isn't correct JSON.")
+    except Exception as e:
+        print(f"error: {e}")
+
