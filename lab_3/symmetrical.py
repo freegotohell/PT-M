@@ -22,8 +22,6 @@ class SymmetricCryptography:
         :param size: size of key
         :return: generated key
         """
-        if size not in {16, 24, 32}:
-            raise ValueError("the size of key must be 16, 24, or 32 bytes")
         try:
             key = os.urandom(size)
             return key
