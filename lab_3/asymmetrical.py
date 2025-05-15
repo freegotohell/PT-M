@@ -16,10 +16,9 @@ class AsymmetricCryptography:
         self.public_key_path = public_key_path
 
     @staticmethod
-    def generate_key(size: int) -> tuple[rsa.RSAPrivateKey, rsa.RSAPublicKey]:
+    def generate_key() -> tuple[rsa.RSAPrivateKey, rsa.RSAPublicKey]:
         """
         generates a pair of RSA keys
-        :param size: size of keys in bits
         :return: tuple of private and public keys
         """
         try:
