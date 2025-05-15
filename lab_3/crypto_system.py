@@ -30,7 +30,7 @@ class HybridCryptoSystem:
         """
         try:
             symmetric_key = self.symmetric.generate_key(size)
-            asymmetric_key = self.asymmetric.generate_key(size)
+            asymmetric_key = self.asymmetric.generate_key()
             private_key, public_key = asymmetric_key
 
             Serialization.save_private_key(self.asymmetric.private_key_path, private_key)
