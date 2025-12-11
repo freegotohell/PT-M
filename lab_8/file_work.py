@@ -6,6 +6,6 @@ def load_json(path: str = "settings.json") -> dict:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError as e:
-        raise FileNotFoundError(f"file {path} not found")
+        raise FileNotFoundError(f"file {path} not found: {e}")
     except Exception as e:
         raise RuntimeError(f"file reading error {path}: {e}")

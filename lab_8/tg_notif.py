@@ -19,7 +19,9 @@ async def exit_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
     cursor.execute("DELETE FROM users WHERE chat_id=?", (chat_id,))
     conn.commit()
-    await update.message.reply_text("Вы больше не будете получать уведомления.")
+    await update.message.reply_text(
+        "Вы больше не будете получать уведомления."
+    )
 
 
 async def notify_all_users(app, message="Новый тендер"):

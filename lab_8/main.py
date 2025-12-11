@@ -55,8 +55,10 @@ def threaded_worker(name: str, delay: float):
 
 
 def start_thread_demo():
-    t1 = threading.Thread(target=threaded_worker, args=("thread 1", 0.7), daemon=True)
-    t2 = threading.Thread(target=threaded_worker, args=("thread 2", 1.0), daemon=True)
+    t1 = threading.Thread(target=threaded_worker, args=("thread 1", 0.7),
+                          daemon=True)
+    t2 = threading.Thread(target=threaded_worker, args=("thread 2", 1.0),
+                          daemon=True)
 
     t1.start()
     t2.start()
