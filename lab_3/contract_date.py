@@ -1,8 +1,7 @@
+import argparse
 import os
 import re
-import argparse
 import PyPDF2
-
 from docx import Document
 
 
@@ -13,24 +12,31 @@ class DocumentProcessor:
 
     Attributes:
         target_phrase (str): The target phrase to search for in documents
-        date_patterns (list): List of regex patterns for matching different date formats
-        city_pattern (str): Regex pattern for matching city name like 'г. Самара'
+        date_patterns (list): List of regex patterns
+            for matching different date formats
+        city_pattern (str): Regex pattern for matching city name like
+            'г. Самара'
     """
+
     def __init__(self):
-        """Initialize the DocumentProcessor with target phrase, date and city patterns."""
+        """Initialize the DocumentProcessor with
+            target phrase, date and city patterns."""
         self.target_phrase = "Сроки"
         self.date_patterns = [
-            r'\b(\d{1,2}\.\d{1,2}\.\d{4})\b',
-            r'\b(\d{1,2}\.\d{1,2}\.\d{2})\b',
-            r'\b(\d{4}-\d{1,2}-\d{1,2})\b',
-            r'\b(\d{1,2}/\d{1,2}/\d{4})\b',
-            r'\b(\d{1,2}/\d{1,2}/\d{2})\b',
-            r'(?:с\s+)(\d{1,2}\.\d{1,2}\.\d{4})(?:\s+по\s+)(\d{1,2}\.\d{1,2}\.\d{4})',
-            r'(?:до\s+)(\d{1,2}\.\d{1,2}\.\d{4})',
-            r'(?:по\s+)(\d{1,2}\.\d{1,2}\.\d{4})'
+            r"\b(\d{1,2}\.\d{1,2}\.\d{4})\b",
+            r"\b(\d{1,2}\.\d{1,2}\.\d{2})\b",
+            r"\b(\d{4}-\d{1,2}-\d{1,2})\b",
+            r"\b(\d{1,2}/\d{1,2}/\d{4})\b",
+            r"\b(\d{1,2}/\d{1,2}/\d{2})\b",
+            r"(?:с\s+)(\d{1,2}\.\d{1,2}\.\d{4})"
+            r"(?:\s+по\s+)(\d{1,2}\.\d{1,2}\.\d{4})",
+            r"(?:до\s+)(\d{1,2}\.\d{1,2}\.\d{4})",
+            r"(?:по\s+)(\d{1,2}\.\d{1,2}\.\d{4})",
         ]
         # Pattern for Russian city in format "г. Самара", "г. Москва", etc.
-        self.city_pattern = r'(г\. [А-ЯЁ][а-яё]{2,}(?:[ -][А-ЯЁ][а-яё]{2,})*)\s{3,}'
+        self.city_pattern = (
+            r"(г\. [А-ЯЁ][а-яё]{2,}(?:[ -][А-ЯЁ][а-яё]{2,})*)\s{3,}"
+        )
 
     def find_dates(self, text):
         """
@@ -51,13 +57,17 @@ class DocumentProcessor:
             return []
 
         # Search only in a limited window after the target phrase
-        text_after_phrase = text[phrase_pos + len(self.target_phrase):phrase_pos + len(self.target_phrase) + 1000]
+        text_after_phrase = text[
+            phrase_pos
+            + len(self.target_phrase): phrase_pos
+            + len(self.target_phrase)
+            + 1000
+        ]
         dates = []
 
         for pattern in self.date_patterns:
             matches = re.finditer(pattern, text_after_phrase, re.IGNORECASE)
             for match in matches:
-                # Handle "from ... to ..." date range
                 if len(match.groups()) == 2:
                     dates.extend([match.group(1), match.group(2)])
                 else:
@@ -90,9 +100,9 @@ class DocumentProcessor:
             file_path (str): Path to the document file to process
             mode (str): What to search for: "date", "city", or "both"
         """
-        if file_path.lower().endswith('.docx'):
+        if file_path.lower().endswith(".docx"):
             text = self.docx_handler(file_path)
-        elif file_path.lower().endswith('.pdf'):
+        elif file_path.lower().endswith(".pdf"):
             text = self.pdf_handler(file_path)
         else:
             print("Unsupported file format")
@@ -108,7 +118,6 @@ class DocumentProcessor:
         # If searching for dates, ensure target phrase exists
         if search_dates and self.target_phrase not in text:
             print(f"Phrase '{self.target_phrase}' not found in document")
-            # Still may want to search for cities even if phrase not found
             if not search_cities:
                 return
 
@@ -145,14 +154,15 @@ class DocumentProcessor:
             file_path (str): Path to the DOCX file
 
         Returns:
-            str: Extracted text content from the document, or empty string on error
+            str: Extracted text content from the document,
+                or empty string on error
         """
         try:
             doc = Document(file_path)
             text = []
             for paragraph in doc.paragraphs:
                 text.append(paragraph.text)
-            return '\n'.join(text)
+            return "\n".join(text)
         except Exception as e:
             print(f"Error reading DOCX file {file_path}: {e}")
             return ""
@@ -165,11 +175,12 @@ class DocumentProcessor:
             file_path (str): Path to the PDF file
 
         Returns:
-            str: Extracted text content from the document, or empty string on error
+            str: Extracted text content from the document,
+                or empty string on error
         """
         try:
             text = ""
-            with open(file_path, 'rb') as file:
+            with open(file_path, "rb") as file:
                 pdf_reader = PyPDF2.PdfReader(file)
                 for page in pdf_reader.pages:
                     text += page.extract_text() + "\n"
@@ -184,19 +195,21 @@ def parse_args():
     Parse command-line arguments.
 
     Positional:
-        file              Path to file
+        file Path to file
 
     Options:
         --mode {date,city,both}
-                           What to search for (default: date)
+            What to search for (default: both)
     """
-    parser = argparse.ArgumentParser(description="Process DOCX/PDF to extract dates and cities")
+    parser = argparse.ArgumentParser(
+        description="Process DOCX/PDF to extract dates and cities"
+    )
     parser.add_argument("file", help="Path to DOCX or PDF file")
     parser.add_argument(
         "--mode",
         choices=["date", "city", "both"],
-        default="date",
-        help="What to search for: 'date', 'city', or 'both' (default: date)"
+        default="both",
+        help="What to search for: 'date', 'city', or 'both' (default: both)",
     )
     return parser.parse_args()
 
