@@ -1,9 +1,13 @@
 from tg_data_base import conn, cursor
-from telegram.ext import ContextTypes, CallbackQueryHandler
+from telegram.ext import ContextTypes
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 
 
-async def send_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def send_menu(
+        update: Update,
+        context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """Send inline keyboard menu with bot actions to the user."""
     keyboard = [
         [InlineKeyboardButton("Проверить хосты", callback_data="cmd_check")],
         [
@@ -12,22 +16,31 @@ async def send_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         ],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("Выберите действие:", reply_markup=reply_markup)
+    await update.message.reply_text("Выберите действие:",
+                                    reply_markup=reply_markup)
 
 
-async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def menu_callback(
+        update: Update,
+        context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """Handle button presses from the inline keyboard menu."""
     query = update.callback_query
     await query.answer()
 
     if query.data == "cmd_check":
-        await context.bot.send_message(chat_id=query.message.chat_id, text="/check")
+        await context.bot.send_message(chat_id=query.message.chat_id,
+                                       text="/check")
     elif query.data == "cmd_start":
-        await context.bot.send_message(chat_id=query.message.chat_id, text="/start")
+        await context.bot.send_message(chat_id=query.message.chat_id,
+                                       text="/start")
     elif query.data == "cmd_exit":
-        await context.bot.send_message(chat_id=query.message.chat_id, text="/exit")
+        await context.bot.send_message(chat_id=query.message.chat_id,
+                                       text="/exit")
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Subscribe user to notifications and show the menu."""
     chat_id = update.message.chat_id
     cursor.execute("SELECT * FROM users WHERE chat_id=?", (chat_id,))
     result = cursor.fetchone()
@@ -42,7 +55,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await send_menu(update, context)
 
 
-async def exit_user(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def exit_user(
+        update: Update,
+        context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """Unsubscribe user from notifications and show the menu."""
     chat_id = update.message.chat_id
     cursor.execute("DELETE FROM users WHERE chat_id=?", (chat_id,))
     conn.commit()
@@ -51,6 +68,7 @@ async def exit_user(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def notify_all_users(app, message: str) -> None:
+    """Send a notification message to all subscribed users."""
     cursor.execute("SELECT chat_id FROM users")
     subscribers = cursor.fetchall()
     for subscriber in subscribers:

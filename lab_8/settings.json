@@ -1,0 +1,12 @@
+{
+  "token": "",
+  "hosts": [
+    "ssau.ru",
+    "pinterest.com"
+  ],
+  "commands": {
+    "check_hosts": "check",
+    "subscribe": "start",
+    "unsubscribe": "exit"
+  }
+}

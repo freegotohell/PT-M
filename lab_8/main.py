@@ -6,6 +6,7 @@ from tg_notif import start, exit_user, menu_callback, send_menu
 
 
 def main() -> None:
+    """Initialize Telegram bot, register handlers and start polling."""
     settings = load_json()
     token = settings["token"]
     hosts = settings.get("hosts", [])
@@ -14,7 +15,8 @@ def main() -> None:
     app = Application.builder().token(token).build()
 
     app.add_handler(CommandHandler(commands.get("subscribe", "start"), start))
-    app.add_handler(CommandHandler(commands.get("unsubscribe", "exit"), exit_user))
+    app.add_handler(CommandHandler(commands.get("unsubscribe", "exit"),
+                                   exit_user))
     app.add_handler(CommandHandler(commands.get("check_hosts", "check"),
                                    lambda u, c: check_now(u, c, hosts)))
     app.add_handler(CommandHandler("menu", send_menu))
