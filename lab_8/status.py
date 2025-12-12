@@ -30,9 +30,7 @@ async def ping_servers(hosts: list[str], timeout: float = 3.0) -> list[ServerSta
     return results
 
 
-async def check_servers(app, hosts: list[str] | None = None, interval: int = 600):
-    if hosts is None:
-        hosts = ["ssau.ru", "pinterest.com"]
+async def check_servers(app, hosts: list[str], interval: int = 600) -> None:
     while True:
         status_list = await ping_servers(hosts)
         down_hosts = [s.host for s in status_list if s.down]
@@ -40,11 +38,10 @@ async def check_servers(app, hosts: list[str] | None = None, interval: int = 600
             await asyncio.sleep(interval)
         else:
             await notify_all_users(app, f"server {down_hosts} is not available")
+            await asyncio.sleep(interval)
 
 
-async def check_now(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    hosts = ["ssau.ru", "pinterest.com"]
-
+async def check_now(update: Update, context: ContextTypes.DEFAULT_TYPE, hosts: list[str]) -> None:
     status_list = await ping_servers(hosts)
     down_hosts = [s.host for s in status_list if s.down]
 
