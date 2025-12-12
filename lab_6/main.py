@@ -1,11 +1,11 @@
 import argparse
 
-from crypto_system import HybridCryptoSystem
-from work_file import *
+from lab_6.crypto_system import HybridCryptoSystem
+from lab_6.work_file import *
 
 
 def main():
-    paths = read_json("settings.json")
+    paths = read_json("../lab_6/settings.json")
 
     main_parser = argparse.ArgumentParser()
     group = main_parser.add_mutually_exclusive_group(required=True)
