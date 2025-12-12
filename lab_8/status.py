@@ -1,5 +1,7 @@
 import asyncio
 import socket
+from telegram import Update
+from telegram.ext import ContextTypes
 from tg_notif import notify_all_users
 
 
@@ -33,6 +35,22 @@ async def check_servers(app, hosts: list[str] | None = None, interval: int = 600
         hosts = ["ssau.ru", "pinterest.com"]
     while True:
         status_list = await ping_servers(hosts)
-        if any(s.down for s in status_list):
-            await notify_all_users(app, "server is not available")
-        await asyncio.sleep(interval)
+        down_hosts = [s.host for s in status_list if s.down]
+        if not down_hosts:
+            await asyncio.sleep(interval)
+        else:
+            await notify_all_users(app, f"server {down_hosts} is not available")
+
+
+async def check_now(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    hosts = ["ssau.ru", "pinterest.com"]
+
+    status_list = await ping_servers(hosts)
+    down_hosts = [s.host for s in status_list if s.down]
+
+    if not down_hosts:
+        text = "servers are available"
+    else:
+        text = "not responding: " + ", ".join(down_hosts)
+
+    await update.message.reply_text(text)

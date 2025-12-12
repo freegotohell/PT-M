@@ -1,82 +1,27 @@
 import asyncio
-import threading
-import time
-
-
 from file_work import load_json
+from status import check_servers, check_now
 from telegram.ext import Application, CommandHandler
-from tg_notif import *
+from tg_notif import start, exit_user
 
 
-def run_bot():
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
+def main() -> None:
+    settings = load_json()
+    token = settings["token"]
 
-    app = Application.builder().token(load_json()["token"]).build()
+    app = Application.builder().token(token).build()
+
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("exit", exit_user))
+    app.add_handler(CommandHandler("check", check_now))
+
+    async def on_startup(application: Application) -> None:
+        asyncio.create_task(check_servers(application))
+
+    app.post_init = on_startup
+
     print("Telegram bot is working")
-
-    try:
-        app.run_polling()
-    finally:
-        loop.close()
-
-
-bot_thread = threading.Thread(target=run_bot, daemon=True)
-bot_thread.start()
-time.sleep(2)
-
-
-async def send_notifications():
-    app = Application.builder().token(load_json()["token"]).build()
-    await notify_all_users(app, "update found")
-
-
-async def async_worker(name: str, delay: float):
-    while True:
-        print(f"[async] {name}: still alive...")
-        await asyncio.sleep(delay)
-
-
-async def async_demo():
-    task1 = asyncio.create_task(async_worker("task 1", 1.0))
-    task2 = asyncio.create_task(async_worker("task 2", 1.5))
-
-    await asyncio.sleep(5)
-    task1.cancel()
-    task2.cancel()
-
-
-def threaded_worker(name: str, delay: float):
-    for i in range(5):
-        print(f"[thread] {name}: step {i}")
-        time.sleep(delay)
-
-
-def start_thread_demo():
-    t1 = threading.Thread(target=threaded_worker, args=("thread 1", 0.7),
-                          daemon=True)
-    t2 = threading.Thread(target=threaded_worker, args=("thread 2", 1.0),
-                          daemon=True)
-
-    t1.start()
-    t2.start()
-
-    t1.join()
-    t2.join()
-
-
-def main():
-    settings = load_json()
-
-    print("threads")
-    start_thread_demo()
-
-    print("asyncio")
-    asyncio.run(async_demo())
-
-    print("demo is over. bot is running")
+    app.run_polling()
 
 
 if __name__ == "__main__":
