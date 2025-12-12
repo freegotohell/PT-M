@@ -1,7 +1,7 @@
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 
-from lab_6.asymmetrical import AsymmetricCryptography
+from asymmetrical import AsymmetricCryptography
 from serialize import Serialization
 from symmetrical import SymmetricCryptography
 from work_file import *
