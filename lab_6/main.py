@@ -1,7 +1,7 @@
 import argparse
 
-from lab_6.crypto_system import HybridCryptoSystem
-from lab_6.work_file import *
+from crypto_system import HybridCryptoSystem
+from work_file import *
 
 
 def main():
