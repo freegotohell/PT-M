@@ -2,11 +2,12 @@ app:
   name: "hybrid_crypto"
   env: "dev"
   default_key_size: 32
+  debug: true
 
 paths:
-  symmetric_key: "symmetric_key.txt"
-  public_key: "public.pem"
-  secret_key: "private.pem"
-  initial_file: "text.txt"
-  encrypted_file: "encrypted_text.txt"
-  decrypted_file: "decrypted_text.txt"
+  symmetric_key: "dev/symmetric_key.txt"
+  public_key: "dev/public.pem"
+  secret_key: "dev/private.pem"
+  initial_file: "dev/text.txt"
+  encrypted_file: "dev/encrypted_text.txt"
+  decrypted_file: "dev/decrypted_text.txt"

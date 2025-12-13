@@ -1,3 +1,4 @@
+from pathlib import Path
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.serialization import (
@@ -15,10 +16,9 @@ class Serialization:
     def save_symmetric_key(file_path: str, key: bytes) -> None:
         """
         saves the symmetric key to file
-        :param file_path: path to file to save
-        :param key: key to save
         """
         try:
+            Path(file_path).parent.mkdir(parents=True, exist_ok=True)
             with open(file_path, "wb") as key_file:
                 key_file.write(key)
         except Exception as e:
@@ -29,8 +29,6 @@ class Serialization:
     def load_symmetric_key(file_path: str) -> bytes:
         """
         loads the symmetric key from file
-        :param file_path: path to file with key
-        :return: key
         """
         try:
             with open(file_path, "rb") as key_file:
@@ -43,10 +41,9 @@ class Serialization:
     def save_private_key(path: str, private_key: rsa.RSAPrivateKey) -> None:
         """
         saves the private RSA key to a file
-        :param path: path to file to save
-        :param private_key: the RSA private key
         """
         try:
+            Path(path).parent.mkdir(parents=True, exist_ok=True)
             with open(path, "wb") as private_out:
                 private_out.write(
                     private_key.private_bytes(
@@ -63,10 +60,9 @@ class Serialization:
     def save_public_key(path: str, public_key: rsa.RSAPublicKey) -> None:
         """
         saves the public RSA key to a file
-        :param path: path to file to save
-        :param public_key: the RSA public key
         """
         try:
+            Path(path).parent.mkdir(parents=True, exist_ok=True)
             with open(path, "wb") as public_out:
                 public_out.write(
                     public_key.public_bytes(
@@ -82,8 +78,6 @@ class Serialization:
     def load_private_key(path: str) -> rsa.RSAPrivateKey:
         """
         loads a private RSA key from a file
-        :param path: the path to the file that contains the key
-        :return: the RSA private key
         """
         try:
             with open(path, "rb") as pem_in:
@@ -92,7 +86,7 @@ class Serialization:
                     private_bytes,
                     password=None,
                 )
-            return d_private_key
+                return d_private_key
         except Exception as e:
             print("Error:", e)
 
@@ -100,13 +94,11 @@ class Serialization:
     def load_public_key(path: str) -> rsa.RSAPublicKey:
         """
         Loads a public RSA key from a file
-        :param path: the path to the file that contains the key
-        :return: the RSA public key
         """
         try:
             with open(path, "rb") as pem_in:
                 public_bytes = pem_in.read()
                 d_public_key = load_pem_public_key(public_bytes)
-            return d_public_key
+                return d_public_key
         except Exception as e:
             print("Error:", e)

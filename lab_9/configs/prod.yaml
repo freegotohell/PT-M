@@ -1,5 +1,6 @@
 app:
   env: "prod"
+  debug: false
 
 paths:
   symmetric_key: "prod/symmetric_key.txt"

@@ -53,6 +53,12 @@ def main():
         paths.public_key,
     )
 
+    if getattr(app_cfg, "debug", False):
+        print(f"Environment: {app_cfg.env}")
+        print(f"Symmetric key path: {paths.symmetric_key}")
+        print(f"Public key path: {paths.public_key}")
+        print(f"Secret key path: {paths.secret_key}")
+
     match (args.generation_flag, args.encryption, args.decryption):
         case (True, False, False):
             h.generate_keys(args.generation)

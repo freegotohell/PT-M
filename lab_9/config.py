@@ -1,10 +1,15 @@
 from pathlib import Path
 from omegaconf import OmegaConf
 
+
 CONFIG_DIR = Path(__file__).parent / "configs"
 
 
 def load_config(env: str | None = None):
+    """
+    Load layered configuration: base + (dev|prod).
+    If env is not provided, use app.env from base.yaml.
+    """
     base_cfg = OmegaConf.load(CONFIG_DIR / "base.yaml")
 
     if env is None:
