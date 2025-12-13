@@ -1,0 +1,10 @@
+app:
+  env: "prod"
+
+paths:
+  symmetric_key: "prod/symmetric_key.txt"
+  public_key: "prod/public.pem"
+  secret_key: "prod/private.pem"
+  initial_file: "prod/text.txt"
+  encrypted_file: "prod/encrypted_text.txt"
+  decrypted_file: "prod/decrypted_text.txt"
