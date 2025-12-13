@@ -1,0 +1,10 @@
+app:
+  env: "dev"
+
+paths:
+  symmetric_key: "dev_symmetric_key.txt"
+  public_key: "dev_public.pem"
+  secret_key: "dev_private.pem"
+  initial_file: "dev_text.txt"
+  encrypted_file: "dev_encrypted_text.txt"
+  decrypted_file: "dev_decrypted_text.txt"
