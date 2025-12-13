@@ -73,4 +73,3 @@ def read_json(filename: str) -> dict:
         print(f"file {filename} isn't correct JSON.")
     except Exception as e:
         print(f"error: {e}")
-

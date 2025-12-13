@@ -8,6 +8,7 @@ class SymmetricCryptography:
     """
     class for symmetric encryption using the Camellia algorithm
     """
+
     def __init__(self, key_path: str) -> None:
         """
         initializes SymmetricCryptography class object

@@ -6,6 +6,7 @@ class AsymmetricCryptography:
     """
     class for asymmetric encryption using RSA
     """
+
     def __init__(self, private_key_path: str, public_key_path: str) -> None:
         """
         initializes AsymmetricCryptography class object
@@ -22,10 +23,7 @@ class AsymmetricCryptography:
         :return: tuple of private and public keys
         """
         try:
-            private_key = rsa.generate_private_key(
-                public_exponent=65537,
-                key_size=2048
-            )
+            private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
             public_key = private_key.public_key()
             return private_key, public_key
         except Exception as e:
@@ -47,7 +45,7 @@ class AsymmetricCryptography:
                     mgf=padding.MGF1(algorithm=hashes.SHA256()),
                     algorithm=hashes.SHA256(),
                     label=None,
-                )
+                ),
             )
             return c_data
         except Exception as e:
@@ -69,7 +67,7 @@ class AsymmetricCryptography:
                     mgf=padding.MGF1(algorithm=hashes.SHA256()),
                     algorithm=hashes.SHA256(),
                     label=None,
-                )
+                ),
             )
             return dc_data
         except Exception as e:

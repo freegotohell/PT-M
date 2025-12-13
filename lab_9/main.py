@@ -15,7 +15,8 @@ def main():
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
-        "-gen", "--generation",
+        "-gen",
+        "--generation",
         help="key generation mode",
         nargs="?",
         const=32,
@@ -24,12 +25,14 @@ def main():
         choices=[16, 24, 32],
     )
     group.add_argument(
-        "-enc", "--encryption",
+        "-enc",
+        "--encryption",
         help="encryption mode",
         action="store_true",
     )
     group.add_argument(
-        "-dec", "--decryption",
+        "-dec",
+        "--decryption",
         help="decryption mode",
         action="store_true",
     )
