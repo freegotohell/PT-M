@@ -1,5 +1,4 @@
 from cryptography.hazmat.primitives import padding, hashes
-from cryptography.hazmat.primitives.asymmetric import padding
 
 from asymmetrical import AsymmetricCryptography
 from serialize import Serialization
