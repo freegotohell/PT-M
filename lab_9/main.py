@@ -23,7 +23,7 @@ def main():
         default=None,
         type=int,
         choices=[16, 24, 32],
-    )
+    )  # default = 32, but still can be one of these
     group.add_argument(
         "-enc",
         "--encryption",
