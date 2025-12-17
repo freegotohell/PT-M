@@ -1,7 +1,10 @@
+import logging
 from PyQt5.QtWidgets import (QMainWindow, QLabel, QVBoxLayout, QPushButton, QFileDialog, QWidget)
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from iterator import Iterator
+
+logger = logging.getLogger(__name__)
 
 
 class Window(QMainWindow):
@@ -11,6 +14,7 @@ class Window(QMainWindow):
         annotation
         """
         super().__init__()
+        logger.info("Main window initialized")
 
         self.iterator = None
 
@@ -41,15 +45,25 @@ class Window(QMainWindow):
         opens a file selection dialog box and processes the user's selection
         """
         file_path, _ = QFileDialog.getOpenFileName(self, "choose annotation", "", "CSV Files (*.csv)")
-        if file_path:
+        if not file_path:
+            logger.info("Annotation file selection canceled by user")
+            return
+
+        logger.info("User selected annotation file: %s", file_path)
+
+        try:
             self.iterator = Iterator(file_path)
-            try:
-                next(self.iterator)
-                self.show_image()
-                self.next.setEnabled(True)
-                self.annotation.setEnabled(False)
-            except StopIteration:
-                self.image.setText("annotation is empty")
+            next(self.iterator)
+            logger.info("Iterator initialized successfully")
+            self.show_image()
+            self.next.setEnabled(True)
+            self.annotation.setEnabled(False)
+        except StopIteration:
+            logger.warning("Annotation file is empty: %s", file_path)
+            self.image.setText("annotation is empty")
+        except Exception as e:
+            logger.exception("Error %s while initializing iterator for file: %s", e, file_path)
+            self.image.setText("error while reading annotation")
 
     def show_image(self) -> None:
         """
