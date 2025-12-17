@@ -1,5 +1,12 @@
 import logging
-from PyQt5.QtWidgets import (QMainWindow, QLabel, QVBoxLayout, QPushButton, QFileDialog, QWidget)
+from PyQt5.QtWidgets import (
+    QMainWindow,
+    QLabel,
+    QVBoxLayout,
+    QPushButton,
+    QFileDialog,
+    QWidget,
+)
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from iterator import Iterator
@@ -10,8 +17,8 @@ logger = logging.getLogger(__name__)
 class Window(QMainWindow):
     def __init__(self):
         """
-        creates a window for displaying images, with a button for switching between images and a button for selecting an
-        annotation
+        creates a window for displaying images, with a button for switching
+        between images and a button for selecting an annotation
         """
         super().__init__()
         logger.info("Main window initialized")
@@ -44,7 +51,12 @@ class Window(QMainWindow):
         """
         opens a file selection dialog box and processes the user's selection
         """
-        file_path, _ = QFileDialog.getOpenFileName(self, "choose annotation", "", "CSV Files (*.csv)")
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "choose annotation",
+            "",
+            "CSV Files (*.csv)"
+        )
         if not file_path:
             logger.info("Annotation file selection canceled by user")
             return
@@ -62,26 +74,49 @@ class Window(QMainWindow):
             logger.warning("Annotation file is empty: %s", file_path)
             self.image.setText("annotation is empty")
         except Exception as e:
-            logger.exception("Error %s while initializing iterator for file: %s", e, file_path)
+            logger.exception(
+                "Error %s while initializing iterator for file: %s",
+                e,
+                file_path
+            )
             self.image.setText("error while reading annotation")
 
     def show_image(self) -> None:
         """
         shows the current image
         """
+        if self.iterator is None:
+            logger.warning("show_image called but iterator is None")
+            self.image.setText("no annotation selected")
+            return
+
         try:
             image_path = next(self.iterator)
+            logger.info("Showing image: %s", image_path)
             pixmap = QPixmap(image_path)
             if pixmap.isNull():
+                logger.error("Cannot load image: %s", image_path)
                 self.image.setText(f"cant load: {image_path}")
             else:
-                self.image.setPixmap(pixmap.scaled(self.image.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                self.image.setPixmap(
+                    pixmap.scaled(
+                        self.image.size(),
+                        Qt.KeepAspectRatio,
+                        Qt.SmoothTransformation
+                    )
+                )
         except StopIteration:
+            logger.info("No more images to show (StopIteration)")
             self.next.setEnabled(False)
             self.image.setText("the end")
+        except Exception as e:
+            logger.exception("Unexpected error while showing image %s", e)
+            self.image.setText("error while showing image")
 
     def show_next_image(self) -> None:
         """
-        if it does not go beyond image_paths it increases the index value by 1 and calls the function again
+        if it does not go beyond image_paths it increases the index value by 1
+        and calls the function again
         """
+        logger.debug("Next button clicked")
         self.show_image()
