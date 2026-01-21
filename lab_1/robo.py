@@ -24,7 +24,7 @@ WHEEL_DIAMETER = 101.6
 ENC_CONST = 747
 
 # Autonomous constants
-TOLERANCE=20
+TOLERANCE = 20
 PI_VALUE = 3.14159265358979323846264338327950288419716939937510
 
 def autonomous_setup():
@@ -60,35 +60,35 @@ def getEncoderA():
         return 0
     else:
         return -abs(Robot.get_value(MOTOR_ID, "enc_a"))
-def getEncoderB( ):
+def getEncoderB():
     encoder_b = Robot.get_value(MOTOR_ID, "enc_b")
-    if encoder_b<0:
+    if encoder_b < 0:
         return abs(Robot.get_value(MOTOR_ID, "enc_b"))
     elif encoder_b == 0:
         return 0
     else:
         return -abs(Robot.get_value(MOTOR_ID, "enc_b"))
-def findTargetValue( distance ):
-  revolution = (distance)/(WHEEL_DIAMETER*PI_VALUE)
-  target_value = revolution*ENC_CONST
-  return target_value
+def findTargetValue(distance):
+    revolution = (distance) / (WHEEL_DIAMETER*PI_VALUE)
+    target_value = revolution * ENC_CONST
+    return target_value
 
 def getMotorSpeedValue(distance):
-  if distance>0:
-    return 1
-  elif distance < 0:
-    return -1
-  else:
-    return 0
+    if distance>0:
+        return 1
+    elif distance < 0:
+        return -1
+    else:
+        return 0
 
 def autoGo(distance):
     current_pos_b = getEncoderB()
     current_pos_a = Robot.get_value(MOTOR_ID, "enc_a")
     target_pos = int(findTargetValue(distance))
 
-    motors_speeed=getMotorSpeedValue(distance)
+    motors_speeed = getMotorSpeedValue(distance)
 
-    enc_value_a_min = target_pos-TOLERANCE+current_pos_a
+    enc_value_a_min = target_pos - TOLERANCE + current_pos_a
     enc_value_a_max = target_pos + TOLERANCE + current_pos_a
     enc_value_b_min = target_pos - TOLERANCE + current_pos_b
     enc_value_b_max = target_pos + TOLERANCE + current_pos_b
@@ -105,8 +105,8 @@ def autoGo(distance):
             Robot.set_value(MOTOR_ID, "velocity_b", motors_speeed)
 
 def getTargetLenght(angle):
-  arc_lenght = (angle/360)*2*PI_VALUE*370
-  return arc_lenght
+    arc_lenght = (angle / 360) * 2 * PI_VALUE * 370
+    return arc_lenght
 
 def getMotorSpeed(motor_id, direction):
     speed_map = {
@@ -116,18 +116,18 @@ def getMotorSpeed(motor_id, direction):
         ("b", "l"): 1
     }
     return speed_map[(motor_id, direction)]
-def autoGoTurn(angle,direction,pos_adj):
-    pos_adj = 1+pos_adj/100
+def autoGoTurn(angle,direction, pos_adj):
+    pos_adj = 1 + pos_adj / 100
     current_pos_b = getEncoderB()
     current_pos_a = Robot.get_value(MOTOR_ID, "enc_a")
     target_len = getTargetLenght(angle)
-    target_len = target_len*pos_adj
+    target_len = target_len * pos_adj
     target_pos = findTargetValue(target_len)
 
     motor_speed_a = getMotorSpeed("a", direction)
     motor_speed_b = getMotorSpeed("b", direction)
 
-    enc_value_a_min = (target_pos*motor_speed_a) - TOLERANCE + current_pos_a
+    enc_value_a_min = (target_pos * motor_speed_a) - TOLERANCE + current_pos_a
     enc_value_a_max = (target_pos * motor_speed_a) + TOLERANCE + current_pos_a
     enc_value_b_min = (target_pos * motor_speed_b) - TOLERANCE + current_pos_b
     enc_value_b_max = (target_pos * motor_speed_b) + TOLERANCE + current_pos_b
@@ -136,9 +136,9 @@ def autoGoTurn(angle,direction,pos_adj):
     deceleration_zone = 0.5
     position_adjustment = pos_adj
 
-    max_motor_speed_a = motor_speed_a *0.45
-    max_motor_speed_b = motor_speed_b* 0.45
-    adjusted_enc_value_a_max = enc_value_a_max-position_adjustment
+    max_motor_speed_a = motor_speed_a * 0.45
+    max_motor_speed_b = motor_speed_b * 0.45
+    adjusted_enc_value_a_max = enc_value_a_max - position_adjustment
     adjusted_enc_value_b_max = enc_value_b_max + position_adjustment
 
     while True:
@@ -148,7 +148,7 @@ def autoGoTurn(angle,direction,pos_adj):
         distance_a = abs(adjusted_enc_value_a_max - current_pos_a)
         distance_b = abs(adjusted_enc_value_b_max - current_pos_b)
 
-        if distance_a > (enc_value_a_max - enc_value_a_min)*deceleration_zone:
+        if distance_a > (enc_value_a_max - enc_value_a_min) * deceleration_zone:
             motor_speed_a = min(max_motor_speed_a, motor_speed_a + acceleration_rate)
         else:
             motor_speed_a = max(0.1 * max_motor_speed_a, motor_speed_a - acceleration_rate)
@@ -165,14 +165,14 @@ def autoGoTurn(angle,direction,pos_adj):
         else:
             Robot.set_value(MOTOR_ID, "velocity_a", motor_speed_a)
             Robot.set_value(MOTOR_ID, "velocity_b", motor_speed_b)
-def dropBall( ):
+def dropBall():
     Robot.set_value(SERVO_ID_CLAW, SERVO_MTR_CLAW, decrease_servo(SERVO_ID_CLAW, SERVO_MTR_CLAW))
 
 def armCode(position):
-    arm_target_pos = Robot.get_value(ARM_MOTOR_ID, "enc_" + ARM_MTR)+position
+    arm_target_pos = Robot.get_value(ARM_MOTOR_ID, "enc_" + ARM_MTR) + position
     while True:
         current_pos = Robot.get_value(ARM_MOTOR_ID, "enc_" + ARM_MTR)
-        if current_pos<arm_target_pos:
+        if current_pos < arm_target_pos:
             Robot.set_value(ARM_MOTOR_ID, "velocity_" + ARM_MTR, ARM_SPEED)
         elif current_pos > arm_target_pos:
             Robot.set_value(ARM_MOTOR_ID, "velocity_" + ARM_MTR, ARM_SPEED * -1.0)
@@ -227,7 +227,7 @@ sequence_counter = 0
 def autonomous_main():
     global function_sequence
     global sequence_counter
-    if sequence_counter<len(function_sequence):
+    if sequence_counter < len(function_sequence):
         func, func_args = function_sequence[sequence_counter]
         func(*func_args)
         Robot.sleep(1)
@@ -244,7 +244,7 @@ def setDefaultMotors():
     Robot.set_value(MOTOR_ID, "velocity_" + LEFT_MTR, 0.0)
     Robot.set_value(MOTOR_ID, "velocity_" + RIGHT_MTR, 0.0)
 
-def arm_code( position ):
+def arm_code(position):
     arm_target_pos = Robot.get_value(ARM_MOTOR_ID, "enc_" + ARM_MTR) + position
     while True:
         current_pos = Robot.get_value(ARM_MOTOR_ID, "enc_" + ARM_MTR)
@@ -257,8 +257,8 @@ def arm_code( position ):
             return False
 def increase_servo(SERVO_ID, SERVO_MTR):
     servo_val = Robot.get_value(SERVO_ID, SERVO_MTR)
-    if servo_val<=1:
-        return servo_val+0.5
+    if servo_val <= 1:
+        return servo_val + 0.5
     else:
         return servo_val
 def decrease_servo(SERVO_ID, SERVO_MTR):
@@ -275,7 +275,7 @@ def teleop_main():
     joystick_y = Gamepad.get_value("joystick_left_y")
     joystick_x = Gamepad.get_value("joystick_left_x")
 
-    left_motor_speed = joystick_y+joystick_x
+    left_motor_speed = joystick_y + joystick_x
     right_motor_speed = joystick_y - joystick_x
 
     global pusher_speed
@@ -283,7 +283,7 @@ def teleop_main():
 
 
     threshold = 0.2
-    if abs(left_motor_speed)<threshold:
+    if abs(left_motor_speed) < threshold:
         left_motor_speed = 0
     if abs(right_motor_speed) < threshold:
         right_motor_speed = 0
