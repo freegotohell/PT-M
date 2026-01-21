@@ -266,19 +266,6 @@ def set_default_motors():
     Robot.set_value(MOTOR_ID, "velocity_" + RIGHT_MTR, 0.0)
 
 
-def arm_code_b(position):
-    arm_target_pos = Robot.get_value(ARM_MOTOR_ID, "enc_" + ARM_MTR) + position
-    while True:
-        current_pos = Robot.get_value(ARM_MOTOR_ID, "enc_" + ARM_MTR)
-        if current_pos < arm_target_pos:
-            Robot.set_value(ARM_MOTOR_ID, "velocity_" + ARM_MTR, ARM_SPEED)
-        elif current_pos > arm_target_pos:
-            Robot.set_value(ARM_MOTOR_ID, "velocity_" + ARM_MTR, ARM_SPEED * -1.0)
-        else:
-            Robot.set_value(ARM_MOTOR_ID, "velocity_" + ARM_MTR, 0.0)
-            return False
-
-
 def increase_servo(SERVO_ID, SERVO_MTR):
     servo_val = Robot.get_value(SERVO_ID, SERVO_MTR)
     if servo_val <= 1:
@@ -327,9 +314,9 @@ def teleop_main():
     elif Gamepad.get_value("button_a"):
         pass
     elif Gamepad.get_value("dpad_up"):
-        arm_code_b(-10)
+        arm_code(-10)
     elif Gamepad.get_value("dpad_down"):
-        arm_code_b(10)
+        arm_code(10)
     elif Gamepad.get_value("r_bumper"):
         claw_speed = increase_servo(SERVO_ID_CLAW, SERVO_MTR_CLAW)
     elif Gamepad.get_value("l_bumper"):
