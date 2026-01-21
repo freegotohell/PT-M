@@ -54,7 +54,7 @@ def teleop_setup():
     print(Robot.get_value(MOTOR_ID, "enc_b"))
 
 
-def getEncoderA():
+def get_encoder_a():
     encoder_a = Robot.get_value(MOTOR_ID, "enc_a")
     if encoder_a < 0:
         return abs(Robot.get_value(MOTOR_ID, "enc_a"))
@@ -64,7 +64,7 @@ def getEncoderA():
         return -abs(Robot.get_value(MOTOR_ID, "enc_a"))
 
 
-def getEncoderB():
+def get_encoder_b():
     encoder_b = Robot.get_value(MOTOR_ID, "enc_b")
     if encoder_b < 0:
         return abs(Robot.get_value(MOTOR_ID, "enc_b"))
@@ -73,13 +73,14 @@ def getEncoderB():
     else:
         return -abs(Robot.get_value(MOTOR_ID, "enc_b"))
 
-def findTargetValue(distance):
+
+def find_target_value(distance):
     revolution = (distance) / (WHEEL_DIAMETER*PI_VALUE)
     target_value = revolution * ENC_CONST
     return target_value
 
 
-def getMotorSpeedValue(distance):
+def get_motor_speed_value(distance):
     if distance>0:
         return 1
     elif distance < 0:
@@ -88,7 +89,7 @@ def getMotorSpeedValue(distance):
         return 0
 
 
-def autoGo(distance):
+def auto_go(distance):
     current_pos_b = getEncoderB()
     current_pos_a = Robot.get_value(MOTOR_ID, "enc_a")
     target_pos = int(findTargetValue(distance))
@@ -112,12 +113,12 @@ def autoGo(distance):
             Robot.set_value(MOTOR_ID, "velocity_b", motors_speeed)
 
 
-def getTargetLenght(angle):
+def get_target_lenght(angle):
     arc_lenght = (angle / 360) * 2 * PI_VALUE * 370
     return arc_lenght
 
 
-def getMotorSpeed(motor_id, direction):
+def get_motor_speed(motor_id, direction):
     speed_map = {
         ("a", "r"): 1,
         ("a", "l"): -1,
@@ -127,7 +128,7 @@ def getMotorSpeed(motor_id, direction):
     return speed_map[(motor_id, direction)]
 
 
-def autoGoTurn(angle,direction, pos_adj):
+def auto_go_turn(angle,direction, pos_adj):
     pos_adj = 1 + pos_adj / 100
     current_pos_b = getEncoderB()
     current_pos_a = Robot.get_value(MOTOR_ID, "enc_a")
@@ -178,11 +179,11 @@ def autoGoTurn(angle,direction, pos_adj):
             Robot.set_value(MOTOR_ID, "velocity_b", motor_speed_b)
 
 
-def dropBall():
+def drop_ball():
     Robot.set_value(SERVO_ID_CLAW, SERVO_MTR_CLAW, decrease_servo(SERVO_ID_CLAW, SERVO_MTR_CLAW))
 
 
-def armCode(position):
+def arm_code(position):
     arm_target_pos = Robot.get_value(ARM_MOTOR_ID, "enc_" + ARM_MTR) + position
     while True:
         current_pos = Robot.get_value(ARM_MOTOR_ID, "enc_" + ARM_MTR)
@@ -197,42 +198,42 @@ def armCode(position):
 
 function_sequences = [
     [
-        (autoGoTurn, [120, "l", 45]),
-        (autoGo, [230]),
-        (dropBall,()),
-        (dropBall,()),
-        (autoGoTurn, [180, "r", 15]),
-        (autoGo, [180]),
-        (autoGoTurn, [25, "l", 25]),
+        (auto_go_turn, [120, "l", 45]),
+        (auto_go, [230]),
+        (drop_ball,()),
+        (drop_ball,()),
+        (auto_go_turn, [180, "r", 15]),
+        (auto_go, [180]),
+        (auto_go_turn, [25, "l", 25]),
 
-        (autoGo, [500]),
+        (auto_go, [500]),
 
-        (autoGo, [620]),
-
-    ],
-    [
-        (autoGoTurn, [120, "r", 36]),
-        (autoGo, [225]),
-
-        (autoGoTurn, [180, "l", 31]),
-        (autoGo, [80]),
-        (autoGoTurn, [60, "r", 15]),
-
-
-        (autoGo, [2100]),
+        (auto_go, [620]),
 
     ],
     [
-        (autoGo, [150]),
-        (autoGoTurn, [30, "l", 60]),
-        (autoGo, [100]),
+        (auto_go_turn, [120, "r", 36]),
+        (auto_go, [225]),
+
+        (auto_go_turn, [180, "l", 31]),
+        (auto_go, [80]),
+        (auto_go_turn, [60, "r", 15]),
+
+
+        (auto_go, [2100]),
+
     ],
     [
-        (autoGo, [300]),
-        (autoGoTurn, [90, "l", 40]),
-        (autoGo, [100]),
-        (autoGoTurn, [90, "l", 40]),
-        (autoGo, [200]),
+        (auto_go, [150]),
+        (auto_go_turn, [30, "l", 60]),
+        (auto_go, [100]),
+    ],
+    [
+        (auto_go, [300]),
+        (auto_go_turn, [90, "l", 40]),
+        (auto_go, [100]),
+        (auto_go_turn, [90, "l", 40]),
+        (auto_go, [200]),
     ],
 ]
 
@@ -250,22 +251,22 @@ def autonomous_main():
         sequence_counter += 1
 
 
-def primaryForward():
+def primary_forward():
     Robot.set_value(MOTOR_ID, "velocity_" + LEFT_MTR, 1.0)
     Robot.set_value(MOTOR_ID, "velocity_" + RIGHT_MTR, 1.0)
 
 
-def primaryBackward():
+def primary_backward():
     Robot.set_value(MOTOR_ID, "velocity_" + LEFT_MTR, -1.0)
     Robot.set_value(MOTOR_ID, "velocity_" + RIGHT_MTR, -1.0)
 
 
-def setDefaultMotors():
+def set_default_motors():
     Robot.set_value(MOTOR_ID, "velocity_" + LEFT_MTR, 0.0)
     Robot.set_value(MOTOR_ID, "velocity_" + RIGHT_MTR, 0.0)
 
 
-def arm_code(position):
+def arm_code_b(position):
     arm_target_pos = Robot.get_value(ARM_MOTOR_ID, "enc_" + ARM_MTR) + position
     while True:
         current_pos = Robot.get_value(ARM_MOTOR_ID, "enc_" + ARM_MTR)
@@ -314,9 +315,9 @@ def teleop_main():
     if abs(right_motor_speed) < threshold:
         right_motor_speed = 0
     if Gamepad.get_value("r_trigger"):
-        primaryBackward()
+        primary_backward()
     elif Gamepad.get_value("l_trigger"):
-        primaryForward()
+        primary_forward()
     elif Gamepad.get_value("button_b"):
         pass
     elif Gamepad.get_value("button_y"):
@@ -326,9 +327,9 @@ def teleop_main():
     elif Gamepad.get_value("button_a"):
         pass
     elif Gamepad.get_value("dpad_up"):
-        arm_code(-10)
+        arm_code_b(-10)
     elif Gamepad.get_value("dpad_down"):
-        arm_code(10)
+        arm_code_b(10)
     elif Gamepad.get_value("r_bumper"):
         claw_speed = increase_servo(SERVO_ID_CLAW, SERVO_MTR_CLAW)
     elif Gamepad.get_value("l_bumper"):
