@@ -27,6 +27,7 @@ ENC_CONST = 747
 TOLERANCE = 20
 PI_VALUE = 3.14159265358979323846264338327950288419716939937510
 
+
 def autonomous_setup():
     print("Autonomous mode has started!")
     Robot.set_value(MOTOR_ID, "invert_a", False)
@@ -34,6 +35,7 @@ def autonomous_setup():
     Robot.set_value(MOTOR_ID, "pid_enabled_a", True)
     Robot.set_value(MOTOR_ID, "pid_enabled_b", True)
     Robot.set_value(SERVO_ID_CLAW, SERVO_MTR_CLAW, -1)
+
 
 def teleop_setup():
     print("Tele-operated mode has started!")
@@ -60,6 +62,8 @@ def getEncoderA():
         return 0
     else:
         return -abs(Robot.get_value(MOTOR_ID, "enc_a"))
+
+
 def getEncoderB():
     encoder_b = Robot.get_value(MOTOR_ID, "enc_b")
     if encoder_b < 0:
@@ -68,10 +72,12 @@ def getEncoderB():
         return 0
     else:
         return -abs(Robot.get_value(MOTOR_ID, "enc_b"))
+
 def findTargetValue(distance):
     revolution = (distance) / (WHEEL_DIAMETER*PI_VALUE)
     target_value = revolution * ENC_CONST
     return target_value
+
 
 def getMotorSpeedValue(distance):
     if distance>0:
@@ -80,6 +86,7 @@ def getMotorSpeedValue(distance):
         return -1
     else:
         return 0
+
 
 def autoGo(distance):
     current_pos_b = getEncoderB()
@@ -104,9 +111,11 @@ def autoGo(distance):
             Robot.set_value(MOTOR_ID, "velocity_a", motors_speeed)
             Robot.set_value(MOTOR_ID, "velocity_b", motors_speeed)
 
+
 def getTargetLenght(angle):
     arc_lenght = (angle / 360) * 2 * PI_VALUE * 370
     return arc_lenght
+
 
 def getMotorSpeed(motor_id, direction):
     speed_map = {
@@ -116,6 +125,8 @@ def getMotorSpeed(motor_id, direction):
         ("b", "l"): 1
     }
     return speed_map[(motor_id, direction)]
+
+
 def autoGoTurn(angle,direction, pos_adj):
     pos_adj = 1 + pos_adj / 100
     current_pos_b = getEncoderB()
@@ -165,8 +176,11 @@ def autoGoTurn(angle,direction, pos_adj):
         else:
             Robot.set_value(MOTOR_ID, "velocity_a", motor_speed_a)
             Robot.set_value(MOTOR_ID, "velocity_b", motor_speed_b)
+
+
 def dropBall():
     Robot.set_value(SERVO_ID_CLAW, SERVO_MTR_CLAW, decrease_servo(SERVO_ID_CLAW, SERVO_MTR_CLAW))
+
 
 def armCode(position):
     arm_target_pos = Robot.get_value(ARM_MOTOR_ID, "enc_" + ARM_MTR) + position
@@ -179,6 +193,7 @@ def armCode(position):
         else:
             Robot.set_value(ARM_MOTOR_ID, "velocity_" + ARM_MTR, 0.0)
             return False
+
 
 function_sequences = [
     [
@@ -224,6 +239,7 @@ function_sequences = [
 function_sequence = function_sequences[SEQUENCE_NUM]
 sequence_counter = 0
 
+
 def autonomous_main():
     global function_sequence
     global sequence_counter
@@ -233,16 +249,21 @@ def autonomous_main():
         Robot.sleep(1)
         sequence_counter += 1
 
+
 def primaryForward():
     Robot.set_value(MOTOR_ID, "velocity_" + LEFT_MTR, 1.0)
     Robot.set_value(MOTOR_ID, "velocity_" + RIGHT_MTR, 1.0)
 
+
 def primaryBackward():
     Robot.set_value(MOTOR_ID, "velocity_" + LEFT_MTR, -1.0)
     Robot.set_value(MOTOR_ID, "velocity_" + RIGHT_MTR, -1.0)
+
+
 def setDefaultMotors():
     Robot.set_value(MOTOR_ID, "velocity_" + LEFT_MTR, 0.0)
     Robot.set_value(MOTOR_ID, "velocity_" + RIGHT_MTR, 0.0)
+
 
 def arm_code(position):
     arm_target_pos = Robot.get_value(ARM_MOTOR_ID, "enc_" + ARM_MTR) + position
@@ -255,12 +276,16 @@ def arm_code(position):
         else:
             Robot.set_value(ARM_MOTOR_ID, "velocity_" + ARM_MTR, 0.0)
             return False
+
+
 def increase_servo(SERVO_ID, SERVO_MTR):
     servo_val = Robot.get_value(SERVO_ID, SERVO_MTR)
     if servo_val <= 1:
         return servo_val + 0.5
     else:
         return servo_val
+
+
 def decrease_servo(SERVO_ID, SERVO_MTR):
     servo_val = Robot.get_value(SERVO_ID, SERVO_MTR)
     if servo_val >= -1:
@@ -271,6 +296,8 @@ def decrease_servo(SERVO_ID, SERVO_MTR):
 
 pusher_speed = 0
 claw_speed = 0
+
+
 def teleop_main():
     joystick_y = Gamepad.get_value("joystick_left_y")
     joystick_x = Gamepad.get_value("joystick_left_x")
@@ -280,7 +307,6 @@ def teleop_main():
 
     global pusher_speed
     global claw_speed
-
 
     threshold = 0.2
     if abs(left_motor_speed) < threshold:
@@ -293,16 +319,12 @@ def teleop_main():
         primaryForward()
     elif Gamepad.get_value("button_b"):
         pass
-
     elif Gamepad.get_value("button_y"):
         pass
-
     elif Gamepad.get_value("button_x"):
         pass
-
     elif Gamepad.get_value("button_a"):
         pass
-
     elif Gamepad.get_value("dpad_up"):
         arm_code(-10)
     elif Gamepad.get_value("dpad_down"):
