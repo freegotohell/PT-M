@@ -107,9 +107,9 @@ def auto_go(distance):
             Robot.set_value(MOTOR_ID, "velocity_b", motors_speeed)
 
 
-def get_target_lenght(angle):
-    arc_lenght = (angle / 360) * 2 * PI_VALUE * 370
-    return arc_lenght
+def get_target_length(angle):
+    arc_length = (angle / 360) * 2 * PI_VALUE * 370
+    return arc_length
 
 
 def get_motor_speed(motor_id, direction):
@@ -126,7 +126,7 @@ def auto_go_turn(angle, direction, pos_adj):
     pos_adj = 1 + pos_adj / 100
     current_pos_b = get_encoder_b()
     current_pos_a = Robot.get_value(MOTOR_ID, "enc_a")
-    target_len = get_target_lenght(angle)
+    target_len = get_target_length(angle)
     target_len = target_len * pos_adj
     target_pos = find_target_value(target_len)
 
